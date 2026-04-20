@@ -1,79 +1,76 @@
 📱 Telegram Clone — Flutter & Django
 
-A modern Telegram-inspired messaging application built with Flutter and Django, designed to replicate the core experience of the latest Telegram Android application.
+A modern Telegram-inspired messaging application built using Flutter and Django, focused on realtime communication, clean architecture, and scalable system design.
 
-This project focuses on real-time communication, clean architecture, and scalable system design.
+🚀 Project Overview
 
-🚀 Project Goal
+This project recreates the core experience of the latest Telegram Android application, combining modern mobile UI with a realtime backend infrastructure.
 
-Build a production-ready messaging platform featuring:
+✨ Main Goals
 
-Private chats
-Groups & Channels
-Media messaging
-Realtime synchronization
-Modern Telegram-style UI
-Scalable backend architecture
-
-The project is developed step-by-step following a structured engineering roadmap.
-
+💬 Private messaging
+👥 Groups & Channels
+🎥 Media messaging
+⚡ Realtime synchronization
+🎨 Telegram-style modern UI
+🧱 Scalable backend architecture
 🧱 Tech Stack
 📱 Frontend
 Flutter (Dart)
 Riverpod — State Management
 go_router — Navigation
-Dio — Networking
-WebSocket communication
+Dio — Networking Layer
+WebSockets — Realtime Communication
 Material 3 UI
 ⚙️ Backend
 Django
 Django REST Framework
 Django Channels
-Redis (Realtime layer)
+Redis (Realtime Layer)
 PostgreSQL (Database)
 🏗 Architecture
 
 The application follows Clean Architecture principles.
 
+Flutter Structure
 lib/
- ├ core/        → themes, constants, utilities
- ├ features/    → app modules (auth, chats, profile)
- ├ shared/      → reusable widgets & models
- ├ services/    → API & websocket services
- └ ui/          → screens and layouts
-
-Backend architecture:
-
+├── core/        # themes, constants, utilities
+├── features/    # auth, chats, profile modules
+├── shared/      # reusable widgets & models
+├── services/    # API & websocket services
+└── ui/          # screens & layouts
+Backend Structure
 telegram_backend/
- ├ users/
- ├ chats/
- ├ messaging/
- ├ config/
+├── users/
+├── chats/
+├── messaging/
+└── config/
 ✨ Planned Features
-Core Messaging
+💬 Core Messaging
 Real-time text messaging
-Message status (sent / delivered / read)
-Reply & edit messages
+Message status (Sent ✓ Delivered ✓✓ Read ✓✓)
+Reply & Edit messages
 Chat synchronization
-Groups
-Member roles
-Permissions
+👥 Groups
+Member roles & permissions
 Invite system
-Channels
+Group administration tools
+📢 Channels
 Broadcast messaging
 Subscriber system
 Post statistics
-Media Support
+🎥 Media Support
 Images
 Videos
 Voice messages
 Video circle messages
 File sharing
-User System
+👤 User System
 Authentication
-Profiles
+User profiles
 Privacy settings
-Online presence
+Online presence tracking
+⚡ Getting Started
 1️⃣ Clone Repository
 git clone https://github.com/javlonovic/telegram
 cd telegram-clone
@@ -106,7 +103,7 @@ Start backend server:
 python manage.py runserver
 🔌 Environment Variables
 
-Create .env file:
+Create a .env file:
 
 DEBUG=True
 SECRET_KEY=your_secret_key
@@ -114,16 +111,16 @@ DATABASE_URL=postgresql://user:password@localhost/db
 REDIS_URL=redis://127.0.0.1:6379
 🎨 UI Philosophy
 
-The interface aims to replicate the latest Telegram Android experience:
+Inspired by the latest Telegram Android design:
 
-minimal design
-fluid animations
-fast navigation
-media-first messaging
-clean typography
+Minimal interface
+Smooth animations
+Fast navigation
+Media-first messaging
+Clean typography
 📸 Screenshots
 
-(Coming Soon)
+🚧 Coming Soon
 
 🧠 Learning Objectives
 
