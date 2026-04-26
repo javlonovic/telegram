@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import message_list_view
+from .views import MessageListView, MediaUploadView
 
 urlpatterns = [
-    path('', message_list_view, name='message-list'),
+    path('', MessageListView.as_view(), name='message-list'),
+    path('upload/', MediaUploadView.as_view(), name='media-upload'),
 ]

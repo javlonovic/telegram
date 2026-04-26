@@ -104,3 +104,25 @@ def user_list_view(request):
     users = User.objects.filter(username__icontains=query)[:20] if query else []
     serializer = UserSerializer(users, many=True, context={'request': request})
     return Response({'users': serializer.data})
+
+
+class FCMTokenView(APIView):
+    """POST /api/users/fcm-token/ — register or update device FCM token."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        token = request.data.get('fcm_token', '').strip()
+        if not token:
+            return Response(
+                {'detail': 'fcm_token is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        request.user.fcm_token = token
+        request.user.save(update_fields=['fcm_token'])
+        return Response({'detail': 'FCM token updated.'})
+
+    def delete(self, request):
+        """DELETE — clear token on logout."""
+        request.user.fcm_token = ''
+        request.user.save(update_fields=['fcm_token'])
+        return Response({'detail': 'FCM token cleared.'})

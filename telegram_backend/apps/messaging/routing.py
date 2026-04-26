@@ -1,5 +1,6 @@
-"""
-WebSocket URL routing for Django Channels.
-Consumers will be added in Phase 2 when real-time messaging is implemented.
-"""
-websocket_urlpatterns = []
+from django.urls import re_path
+from .consumers import ChatConsumer
+
+websocket_urlpatterns = [
+    re_path(r'^ws/chat/(?P<chat_id>\d+)/$', ChatConsumer.as_asgi()),
+]

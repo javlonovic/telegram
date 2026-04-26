@@ -25,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, unique=True)
     bio = models.TextField(blank=True, default='')
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    fcm_token = models.TextField(blank=True, default='')   # Firebase push token
     created_at = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)

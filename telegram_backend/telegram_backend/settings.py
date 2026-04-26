@@ -73,17 +73,16 @@ TEMPLATES = [
 # ---------------------------------------------------------------------------
 # Database — PostgreSQL
 # ---------------------------------------------------------------------------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='telegram_db'),
-        'USER': config('DB_USER', default='postgres'),
-        'PASSWORD': config('DB_PASSWORD', default=''),
-        'HOST': config('DB_HOST', default='localhost'),
-        'PORT': config('DB_PORT', default='5432'),
-    }
-}
-
+    DATABASES = {
+       'default': {
+           'ENGINE': 'django.db.backends.postgresql',
+           'NAME': config('DB_NAME', default='telegram_db'),
+           'USER': config('DB_USER', default='postgres'),
+           'PASSWORD': config('DB_PASSWORD', default=''),
+           'HOST': config('DB_HOST', default='localhost'),
+           'PORT': config('DB_PORT', default='5432'),
+       }
+   }
 # ---------------------------------------------------------------------------
 # Channel Layers — Redis
 # ---------------------------------------------------------------------------
@@ -165,3 +164,43 @@ SIMPLE_JWT = {
     'USER_ID_FIELD': 'id',
     'USER_ID_CLAIM': 'user_id',
 }
+
+# ---------------------------------------------------------------------------
+# File Upload
+# ---------------------------------------------------------------------------
+FILE_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024   # 20 MB in memory
+DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024
+
+ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
+ALLOWED_FILE_TYPES = ALLOWED_IMAGE_TYPES + [
+    'application/pdf',
+    'application/zip',
+    'audio/mpeg',
+    'audio/ogg',
+    'video/mp4',
+    'video/webm',
+]
+MAX_UPLOAD_SIZE_BYTES = 20 * 1024 * 1024  # 20 MB
+
+# ---------------------------------------------------------------------------
+# Storage — local by default, swap USE_S3=True for production
+# ---------------------------------------------------------------------------
+USE_S3 = config('USE_S3', default=False, cast=bool)
+
+if USE_S3:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_DEFAULT_ACL = 'private'
+    AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default=None)
+
+# ---------------------------------------------------------------------------
+# Firebase
+# ---------------------------------------------------------------------------
+FIREBASE_CREDENTIALS_PATH = config(
+    'FIREBASE_CREDENTIALS_PATH',
+    default='telegram_backend/firebase/service_account.json',
+)

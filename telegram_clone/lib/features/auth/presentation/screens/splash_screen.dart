@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../providers/auth_notifier.dart';
+import '../providers/auth_state.dart';
 
-class SplashScreen extends StatefulWidget {
+class SplashScreen extends ConsumerWidget {
   const SplashScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Listen for auth resolution and navigate accordingly
+    ref.listen<AuthState>(authNotifierProvider, (_, next) {
+      if (next.status == AuthStatus.authenticated) {
+        context.go(AppRoutes.chats);
+      } else if (next.status == AuthStatus.unauthenticated) {
+        context.go(AppRoutes.login);
+      }
+    });
 
-class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    _navigate();
-  }
-
-  Future<void> _navigate() async {
-    await Future.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      // TODO: Replace with auth guard logic in Phase 2
-      context.go(AppRoutes.login);
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
@@ -43,6 +36,8 @@ class _SplashScreenState extends State<SplashScreen> {
                 fontWeight: FontWeight.w700,
               ),
             ),
+            SizedBox(height: 32),
+            CircularProgressIndicator(color: Colors.white54, strokeWidth: 2),
           ],
         ),
       ),

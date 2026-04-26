@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../core/providers/app_providers.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -37,9 +38,8 @@ class SettingsScreen extends ConsumerWidget {
           ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout',
-                style: TextStyle(color: Colors.red)),
-            onTap: () {},
+            title: const Text('Logout', style: TextStyle(color: Colors.red)),
+            onTap: () => ref.read(authNotifierProvider.notifier).logout(),
           ),
         ],
       ),

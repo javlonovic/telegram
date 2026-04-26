@@ -1,6 +1,9 @@
-import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'app_routes.dart';
+import '../../features/auth/presentation/providers/auth_notifier.dart';
+import '../../features/auth/presentation/providers/auth_state.dart';
 import '../../features/auth/presentation/screens/splash_screen.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
@@ -9,12 +12,37 @@ import '../../features/chats/presentation/screens/chat_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 
-/// Centralized router configuration.
-/// Route guards will be added here in Phase 2 when auth state is implemented.
-GoRouter buildRouter() {
+/// Routes that don't require authentication.
+const _publicRoutes = {AppRoutes.splash, AppRoutes.login, AppRoutes.register};
+
+GoRouter buildRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
+    // Rebuild router when auth state changes
+    refreshListenable: _AuthStateListenable(ref),
+    redirect: (context, state) {
+      final authState = ref.read(authNotifierProvider);
+      final isPublic = _publicRoutes.contains(state.matchedLocation);
+
+      // Still loading — stay on splash
+      if (authState.status == AuthStatus.initial ||
+          authState.status == AuthStatus.loading) {
+        return AppRoutes.splash;
+      }
+
+      // Not authenticated trying to access protected route
+      if (authState.status == AuthStatus.unauthenticated && !isPublic) {
+        return AppRoutes.login;
+      }
+
+      // Authenticated trying to access auth screens
+      if (authState.isAuthenticated && isPublic && state.matchedLocation != AppRoutes.splash) {
+        return AppRoutes.chats;
+      }
+
+      return null; // No redirect needed
+    },
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -82,26 +110,20 @@ GoRouter buildRouter() {
   );
 }
 
-Widget _fadeTransition(
-  BuildContext context,
-  Animation<double> animation,
-  Animation<double> secondaryAnimation,
-  Widget child,
-) {
-  return FadeTransition(opacity: animation, child: child);
+/// Makes GoRouter react to Riverpod auth state changes.
+class _AuthStateListenable extends ChangeNotifier {
+  _AuthStateListenable(Ref ref) {
+    ref.listen<AuthState>(authNotifierProvider, (_, __) => notifyListeners());
+  }
 }
 
-Widget _slideTransition(
-  BuildContext context,
-  Animation<double> animation,
-  Animation<double> secondaryAnimation,
-  Widget child,
-) {
-  return SlideTransition(
-    position: Tween<Offset>(
-      begin: const Offset(1.0, 0.0),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
-    child: child,
-  );
-}
+Widget _fadeTransition(_, animation, __, child) =>
+    FadeTransition(opacity: animation, child: child);
+
+Widget _slideTransition(_, animation, __, child) => SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(1.0, 0.0),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(parent: animation, curve: Curves.easeInOut)),
+      child: child,
+    );
