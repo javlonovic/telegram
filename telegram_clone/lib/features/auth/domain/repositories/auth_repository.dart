@@ -16,4 +16,10 @@ abstract class AuthRepository {
   Future<UserEntity?> getCurrentUser();
 
   Future<bool> isAuthenticated();
+
+  Future<UserEntity> updateProfile({
+    String? username,
+    String? bio,
+    String? avatarPath,
+  });
 }

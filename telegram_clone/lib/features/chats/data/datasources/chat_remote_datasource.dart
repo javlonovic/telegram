@@ -11,7 +11,10 @@ class ChatRemoteDataSource {
 
   Future<List<ChatModel>> getChats() async {
     final response = await _dio.get(ApiConstants.chats);
-    final results = response.data as List<dynamic>;
+    // Handle both paginated {"results": [...]} and plain list responses
+    final data = response.data;
+    final List<dynamic> results =
+        data is Map ? (data['results'] as List<dynamic>? ?? []) : data as List<dynamic>;
     return results
         .map((e) => ChatModel.fromJson(e as Map<String, dynamic>))
         .toList();

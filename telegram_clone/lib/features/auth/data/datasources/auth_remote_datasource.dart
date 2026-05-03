@@ -56,6 +56,24 @@ class AuthRemoteDataSource {
     return UserModel.fromJson(response.data as Map<String, dynamic>);
   }
 
+  Future<UserModel> updateProfile({
+    String? username,
+    String? bio,
+    String? avatarPath,
+  }) async {
+    final data = <String, dynamic>{};
+    if (username != null) data['username'] = username;
+    if (bio != null) data['bio'] = bio;
+    if (avatarPath != null) {
+      data['avatar'] = await MultipartFile.fromFile(avatarPath);
+    }
+    final response = await _dio.patch(
+      ApiConstants.me,
+      data: FormData.fromMap(data),
+    );
+    return UserModel.fromJson(response.data as Map<String, dynamic>);
+  }
+
   Future<void> _saveTokens(Map<String, dynamic> data) async {
     await TokenStorage.instance.saveTokens(
       access: data['access'] as String,

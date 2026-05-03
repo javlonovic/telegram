@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/constants/app_strings.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../shared/widgets/app_avatar.dart';
+import '../../../auth/presentation/providers/auth_notifier.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authNotifierProvider).user;
+
     return Scaffold(
       appBar: AppBar(title: const Text(AppStrings.profile)),
       body: Padding(
@@ -15,24 +21,41 @@ class ProfileScreen extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: AppSpacing.lg),
-            const Center(
-              child: AppAvatar(name: 'John Doe', size: AppSpacing.avatarXl),
+            Center(
+              child: AppAvatar(
+                imageUrl: user?.avatarUrl,
+                name: user?.username,
+                size: AppSpacing.avatarXl,
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
-            Text('John Doe', style: Theme.of(context).textTheme.headlineMedium),
-            Text('+1 234 567 8900',
-                style: Theme.of(context).textTheme.bodyMedium),
+            Text(
+              user?.username ?? '',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Text(
+              user?.phone ?? '',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            if (user?.bio != null && user!.bio.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                user.bio,
+                style: Theme.of(context).textTheme.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+            ],
             const SizedBox(height: AppSpacing.lg),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.edit_outlined),
               title: const Text('Edit Profile'),
-              onTap: () {},
+              onTap: () => context.push(AppRoutes.editProfile),
             ),
             ListTile(
               leading: const Icon(Icons.settings_outlined),
               title: const Text(AppStrings.settings),
-              onTap: () {},
+              onTap: () => context.push(AppRoutes.settings),
             ),
           ],
         ),

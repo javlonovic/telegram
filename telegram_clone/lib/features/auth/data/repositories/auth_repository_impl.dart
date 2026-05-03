@@ -58,6 +58,24 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> isAuthenticated() => TokenStorage.instance.hasTokens();
 
+  @override
+  Future<UserEntity> updateProfile({
+    String? username,
+    String? bio,
+    String? avatarPath,
+  }) async {
+    try {
+      final model = await _dataSource.updateProfile(
+        username: username,
+        bio: bio,
+        avatarPath: avatarPath,
+      );
+      return model.toEntity();
+    } on DioException catch (e) {
+      throw _mapError(e);
+    }
+  }
+
   /// Maps Dio errors to readable messages.
   Exception _mapError(DioException e) {
     final data = e.response?.data;

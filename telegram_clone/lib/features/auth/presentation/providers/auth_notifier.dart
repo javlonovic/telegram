@@ -83,8 +83,27 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  Future<void> logout() async {
-    await NotificationService.instance.clearToken();
+  Future<void> updateProfile({
+    String? username,
+    String? bio,
+    String? avatarPath,
+  }) async {
+    try {
+      final user = await _repository.updateProfile(
+        username: username,
+        bio: bio,
+        avatarPath: avatarPath,
+      );
+      state = state.copyWith(status: AuthStatus.authenticated, user: user);
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString().replaceFirst('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> logout() async {    await NotificationService.instance.clearToken();
     await PresenceService.instance.disconnect();
     await _repository.logout();
     state = const AuthState(status: AuthStatus.unauthenticated);

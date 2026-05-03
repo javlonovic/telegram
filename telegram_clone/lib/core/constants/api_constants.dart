@@ -1,6 +1,6 @@
 abstract class ApiConstants {
-  static const String baseUrl = 'https://telegram-production-8d6d.up.railway.app/api';
-  static const String wsBaseUrl = 'wss://telegram-production-8d6d.up.railway.app';
+  static const String baseUrl = 'https://telegram-production-47a5.up.railway.app/api';
+  static const String wsBaseUrl = 'wss://telegram-production-47a5.up.railway.app';
 
   // Auth
   static const String register = '/auth/register/';

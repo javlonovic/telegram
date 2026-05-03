@@ -11,4 +11,5 @@ abstract class AppRoutes {
   static const String contacts = '/contacts';
   static const String search = '/search';
   static const String newGroup = '/new-group';
+  static const String editProfile = '/profile/edit';
 }

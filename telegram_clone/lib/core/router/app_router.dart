@@ -14,6 +14,7 @@ import '../../features/contacts/presentation/screens/contacts_screen.dart';
 import '../../features/contacts/presentation/screens/search_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
+import '../../features/profile/presentation/screens/edit_profile_screen.dart';
 
 const _publicRoutes = {AppRoutes.splash, AppRoutes.login, AppRoutes.register};
 
@@ -137,6 +138,15 @@ GoRouter buildRouter(Ref ref) {
         pageBuilder: (_, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const NewGroupScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        name: 'edit-profile',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const EditProfileScreen(),
           transitionsBuilder: _slideTransition,
         ),
       ),
