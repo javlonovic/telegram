@@ -1,14 +1,13 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
+from .models import Contact
 
 User = get_user_model()
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password]
-    )
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
 
     class Meta:
@@ -30,8 +29,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'phone', 'bio', 'avatar_url', 'created_at')
-        read_only_fields = ('id', 'created_at')
+        fields = ('id', 'username', 'phone', 'bio', 'avatar_url', 'is_online', 'last_seen', 'created_at')
+        read_only_fields = ('id', 'created_at', 'is_online', 'last_seen')
 
     def get_avatar_url(self, obj):
         request = self.context.get('request')
@@ -44,3 +43,19 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'bio', 'avatar')
+
+
+class ContactSerializer(serializers.ModelSerializer):
+    contact = UserSerializer(read_only=True)
+    contact_id = serializers.PrimaryKeyRelatedField(
+        write_only=True, source='contact', queryset=User.objects.all()
+    )
+
+    class Meta:
+        model = Contact
+        fields = ('id', 'contact', 'contact_id', 'nickname', 'created_at')
+        read_only_fields = ('id', 'created_at')
+
+    def create(self, validated_data):
+        validated_data['owner'] = self.context['request'].user
+        return super().create(validated_data)

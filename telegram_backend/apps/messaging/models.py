@@ -57,3 +57,25 @@ class Message(models.Model):
         if self.media_file:
             return self.media_file.url
         return None
+
+
+class MessageReadReceipt(models.Model):
+    """Tracks which users have read which messages."""
+    message = models.ForeignKey(
+        Message,
+        on_delete=models.CASCADE,
+        related_name='read_receipts',
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='read_receipts',
+    )
+    read_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'message_read_receipts'
+        unique_together = ('message', 'user')
+
+    def __str__(self):
+        return f'{self.user.username} read Message #{self.message_id}'

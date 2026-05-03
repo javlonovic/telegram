@@ -9,10 +9,12 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/chats/presentation/screens/chats_screen.dart';
 import '../../features/chats/presentation/screens/chat_screen.dart';
+import '../../features/chats/presentation/screens/new_group_screen.dart';
+import '../../features/contacts/presentation/screens/contacts_screen.dart';
+import '../../features/contacts/presentation/screens/search_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
 import '../../features/profile/presentation/screens/settings_screen.dart';
 
-/// Routes that don't require authentication.
 const _publicRoutes = {AppRoutes.splash, AppRoutes.login, AppRoutes.register};
 
 GoRouter buildRouter(Ref ref) {
@@ -31,8 +33,16 @@ GoRouter buildRouter(Ref ref) {
         return AppRoutes.splash;
       }
 
-      // Not authenticated trying to access protected route
-      if (authState.status == AuthStatus.unauthenticated && !isPublic) {
+      // Not authenticated (or error) trying to access protected route
+      if ((authState.status == AuthStatus.unauthenticated ||
+              authState.status == AuthStatus.error) &&
+          !isPublic) {
+        return AppRoutes.login;
+      }
+
+      // Error on a public route — go to login
+      if (authState.status == AuthStatus.error &&
+          state.matchedLocation == AppRoutes.splash) {
         return AppRoutes.login;
       }
 
@@ -100,6 +110,33 @@ GoRouter buildRouter(Ref ref) {
         pageBuilder: (_, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const SettingsScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.contacts,
+        name: 'contacts',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ContactsScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.search,
+        name: 'search',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SearchScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.newGroup,
+        name: 'new-group',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const NewGroupScreen(),
           transitionsBuilder: _slideTransition,
         ),
       ),

@@ -8,6 +8,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "_flutterfire_internals",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/_flutterfire_internals-1.3.41",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "analyzer",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/analyzer-6.4.1",
       "packageUri": "lib/",
@@ -116,18 +122,6 @@
       "languageVersion": "2.19"
     },
     {
-      "name": "ci",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/ci-0.1.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "cli_util",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/cli_util-0.4.1",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "clock",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/clock-1.1.1",
       "packageUri": "lib/",
@@ -152,6 +146,12 @@
       "languageVersion": "2.18"
     },
     {
+      "name": "cross_file",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/cross_file-0.3.4+2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "crypto",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/crypto-3.0.3",
       "packageUri": "lib/",
@@ -164,18 +164,6 @@
       "languageVersion": "3.1"
     },
     {
-      "name": "custom_lint",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/custom_lint-0.6.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
-      "name": "custom_lint_builder",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/custom_lint_builder-0.6.4",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "custom_lint_core",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/custom_lint_core-0.6.3",
       "packageUri": "lib/",
@@ -186,6 +174,12 @@
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/dart_style-2.3.6",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "dbus",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/dbus-0.7.12",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
     },
     {
       "name": "dio",
@@ -218,6 +212,72 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "file_picker",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/file_picker-6.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "file_selector_linux",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/file_selector_linux-0.9.3+2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "file_selector_macos",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/file_selector_macos-0.9.4+2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "file_selector_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/file_selector_platform_interface-2.6.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "file_selector_windows",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/file_selector_windows-0.9.3+3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "firebase_core",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_core-3.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_core_platform_interface-5.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_core_web",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_core_web-2.17.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_messaging",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_messaging-15.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_messaging_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_messaging_platform_interface-4.5.43",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_messaging_web",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/firebase_messaging_web-3.8.13",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "fixnum",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/fixnum-1.1.1",
       "packageUri": "lib/",
@@ -242,10 +302,70 @@
       "languageVersion": "3.1"
     },
     {
+      "name": "flutter_local_notifications",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_local_notifications-17.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_local_notifications_linux",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-4.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_local_notifications_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_local_notifications_platform_interface-7.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_plugin_android_lifecycle",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.19",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "flutter_riverpod",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_riverpod-2.6.1",
       "packageUri": "lib/",
       "languageVersion": "2.17"
+    },
+    {
+      "name": "flutter_secure_storage",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage-9.2.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_linux",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage_linux-1.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_macos",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage_macos-3.1.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage_platform_interface-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_web",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage_web-1.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "flutter_secure_storage_windows",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/flutter_secure_storage_windows-3.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "flutter_test",
@@ -296,12 +416,6 @@
       "languageVersion": "2.18"
     },
     {
-      "name": "hotreloader",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/hotreloader-4.4.0",
-      "packageUri": "lib/",
-      "languageVersion": "3.0"
-    },
-    {
       "name": "http",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/http-1.2.2",
       "packageUri": "lib/",
@@ -320,6 +434,54 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "image_picker",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker-1.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "image_picker_android",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_android-0.8.12+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "image_picker_for_web",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_for_web-3.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "image_picker_ios",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_ios-0.8.12+1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "image_picker_linux",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_linux-0.2.1+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "image_picker_macos",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_macos-0.2.1+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
+      "name": "image_picker_platform_interface",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_platform_interface-2.10.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "image_picker_windows",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/image_picker_windows-0.2.1+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "io",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/io-1.0.4",
       "packageUri": "lib/",
@@ -327,9 +489,9 @@
     },
     {
       "name": "js",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/js-0.7.1",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/js-0.6.7",
       "packageUri": "lib/",
-      "languageVersion": "3.1"
+      "languageVersion": "2.19"
     },
     {
       "name": "json_annotation",
@@ -404,6 +566,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "open_filex",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/open_filex-4.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "package_config",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/package_config-2.1.0",
       "packageUri": "lib/",
@@ -450,6 +618,18 @@
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/path_provider_windows-2.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.2"
+    },
+    {
+      "name": "petitparser",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/petitparser-6.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "photo_view",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/photo_view-0.15.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
     },
     {
       "name": "platform",
@@ -502,12 +682,6 @@
     {
       "name": "riverpod_generator",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/riverpod_generator-2.4.0",
-      "packageUri": "lib/",
-      "languageVersion": "2.17"
-    },
-    {
-      "name": "riverpod_lint",
-      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/riverpod_lint-2.3.10",
       "packageUri": "lib/",
       "languageVersion": "2.17"
     },
@@ -614,6 +788,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "timezone",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/timezone-0.9.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.19"
+    },
+    {
       "name": "timing",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/timing-1.0.1",
       "packageUri": "lib/",
@@ -662,10 +842,22 @@
       "languageVersion": "3.3"
     },
     {
+      "name": "win32",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/win32-5.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
       "name": "xdg_directories",
       "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/xdg_directories-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
+    },
+    {
+      "name": "xml",
+      "rootUri": "file:///home/prodigy/.pub-cache/hosted/pub.dev/xml-6.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "yaml",
@@ -680,7 +872,7 @@
       "languageVersion": "3.3"
     }
   ],
-  "generated": "2026-04-20T20:03:32.100103Z",
+  "generated": "2026-05-03T11:07:41.409609Z",
   "generator": "pub",
   "generatorVersion": "3.3.4"
 }

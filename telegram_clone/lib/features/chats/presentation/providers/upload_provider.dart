@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/media_upload_service.dart';
-import '../../domain/entities/message_entity.dart';
 import 'messages_provider.dart';
 
 class UploadState {

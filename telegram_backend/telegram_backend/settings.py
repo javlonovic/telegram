@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decouple import config
 from pathlib import Path
 
@@ -5,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='unsafe-secret-key-change-in-production')
 DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,192.168.1.102').split(',')
 
 # ---------------------------------------------------------------------------
 # Applications
@@ -71,29 +72,49 @@ TEMPLATES = [
 ]
 
 # ---------------------------------------------------------------------------
-# Database — PostgreSQL
+# Database — SQLite (dev) or PostgreSQL (prod)
 # ---------------------------------------------------------------------------
+USE_SQLITE = config('USE_SQLITE', default=False, cast=bool)
+
+if USE_SQLITE:
     DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': config('DB_NAME', default='telegram_db'),
-           'USER': config('DB_USER', default='postgres'),
-           'PASSWORD': config('DB_PASSWORD', default=''),
-           'HOST': config('DB_HOST', default='localhost'),
-           'PORT': config('DB_PORT', default='5432'),
-       }
-   }
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='telegram_db'),
+            'USER': config('DB_USER', default='postgres'),
+            'PASSWORD': config('DB_PASSWORD', default=''),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
+
 # ---------------------------------------------------------------------------
-# Channel Layers — Redis
+# Channel Layers — in-memory (dev) or Redis (prod)
 # ---------------------------------------------------------------------------
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            'hosts': [config('REDIS_URL', default='redis://localhost:6379')],
+USE_REDIS = config('USE_REDIS', default=False, cast=bool)
+
+if USE_REDIS:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [config('REDIS_URL', default='redis://localhost:6379')],
+            },
         },
-    },
-}
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 # ---------------------------------------------------------------------------
 # Django REST Framework
@@ -110,6 +131,19 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+}
+
+# ---------------------------------------------------------------------------
+# Simple JWT
+# ---------------------------------------------------------------------------
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'user_id',
 }
 
 # ---------------------------------------------------------------------------
@@ -151,24 +185,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # ---------------------------------------------------------------------------
-# Simple JWT
-# ---------------------------------------------------------------------------
-from datetime import timedelta
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': False,
-    'AUTH_HEADER_TYPES': ('Bearer',),
-    'USER_ID_FIELD': 'id',
-    'USER_ID_CLAIM': 'user_id',
-}
-
-# ---------------------------------------------------------------------------
 # File Upload
 # ---------------------------------------------------------------------------
-FILE_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024   # 20 MB in memory
+FILE_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 20 * 1024 * 1024
 
 ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
@@ -180,7 +199,7 @@ ALLOWED_FILE_TYPES = ALLOWED_IMAGE_TYPES + [
     'video/mp4',
     'video/webm',
 ]
-MAX_UPLOAD_SIZE_BYTES = 20 * 1024 * 1024  # 20 MB
+MAX_UPLOAD_SIZE_BYTES = 20 * 1024 * 1024
 
 # ---------------------------------------------------------------------------
 # Storage — local by default, swap USE_S3=True for production

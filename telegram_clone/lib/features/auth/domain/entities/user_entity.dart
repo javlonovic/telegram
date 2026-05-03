@@ -1,4 +1,3 @@
-/// Pure domain entity — no JSON, no Flutter, no external deps.
 class UserEntity {
   const UserEntity({
     required this.id,
@@ -6,6 +5,8 @@ class UserEntity {
     required this.phone,
     this.bio = '',
     this.avatarUrl,
+    this.isOnline = false,
+    this.lastSeen,
     required this.createdAt,
   });
 
@@ -14,6 +15,8 @@ class UserEntity {
   final String phone;
   final String bio;
   final String? avatarUrl;
+  final bool isOnline;
+  final DateTime? lastSeen;
   final DateTime createdAt;
 
   UserEntity copyWith({
@@ -22,6 +25,8 @@ class UserEntity {
     String? phone,
     String? bio,
     String? avatarUrl,
+    bool? isOnline,
+    DateTime? lastSeen,
     DateTime? createdAt,
   }) {
     return UserEntity(
@@ -30,6 +35,8 @@ class UserEntity {
       phone: phone ?? this.phone,
       bio: bio ?? this.bio,
       avatarUrl: avatarUrl ?? this.avatarUrl,
+      isOnline: isOnline ?? this.isOnline,
+      lastSeen: lastSeen ?? this.lastSeen,
       createdAt: createdAt ?? this.createdAt,
     );
   }

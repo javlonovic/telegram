@@ -43,8 +43,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
-            message_type = data.get('type', 'text')
+            event_type = data.get('type', 'message')
+
+            # Handle typing indicator
+            if event_type == 'typing':
+                await self.channel_layer.group_send(
+                    self.room_group_name,
+                    {
+                        'type': 'typing_indicator',
+                        'user_id': self.user.id,
+                        'username': self.user.username,
+                        'is_typing': data.get('is_typing', False),
+                    },
+                )
+                return
+
             content = data.get('content', '')
+            message_type = data.get('message_type', 'text')
 
             if not content.strip():
                 return
@@ -52,13 +67,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             message = await self.save_message(content, message_type)
             payload = await self.message_to_dict(message)
 
-            # Broadcast to room
             await self.channel_layer.group_send(
                 self.room_group_name,
                 {'type': 'chat_message', 'message': payload},
             )
-
-            # Push notifications to offline members (non-blocking)
             await self.notify_members(message)
 
         except Exception as e:
@@ -67,6 +79,16 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event['message']))
+
+    async def typing_indicator(self, event):
+        # Don't send typing back to the typer themselves
+        if event['user_id'] != self.user.id:
+            await self.send(text_data=json.dumps({
+                'type': 'typing',
+                'user_id': event['user_id'],
+                'username': event['username'],
+                'is_typing': event['is_typing'],
+            }))
 
     # ------------------------------------------------------------------
     # DB helpers

@@ -140,8 +140,48 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => _showNewChatOptions(context),
         child: const Icon(Icons.edit_outlined),
+      ),
+    );
+  }
+
+  void _showNewChatOptions(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.search),
+              title: const Text('Find User'),
+              onTap: () {
+                Navigator.pop(context);
+                context.go(AppRoutes.search);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people_outline),
+              title: const Text('Contacts'),
+              onTap: () {
+                Navigator.pop(context);
+                context.go(AppRoutes.contacts);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.group_add_outlined),
+              title: const Text('New Group'),
+              onTap: () {
+                Navigator.pop(context);
+                context.go(AppRoutes.newGroup);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

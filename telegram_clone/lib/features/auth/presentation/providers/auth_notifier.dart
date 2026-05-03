@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/network/presence_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -20,16 +21,18 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   final AuthRepository _repository;
 
-  /// Called on app start — restores session from stored tokens.
   Future<void> checkAuthStatus() async {
     state = state.copyWith(status: AuthStatus.loading);
     try {
       final isAuth = await _repository.isAuthenticated();
       if (isAuth) {
         final user = await _repository.getCurrentUser();
-        state = user != null
-            ? state.copyWith(status: AuthStatus.authenticated, user: user)
-            : state.copyWith(status: AuthStatus.unauthenticated);
+        if (user != null) {
+          state = state.copyWith(status: AuthStatus.authenticated, user: user);
+          PresenceService.instance.connect().catchError((_) {});
+        } else {
+          state = state.copyWith(status: AuthStatus.unauthenticated);
+        }
       } else {
         state = state.copyWith(status: AuthStatus.unauthenticated);
       }
@@ -43,7 +46,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       final user = await _repository.login(phone: phone, password: password);
       state = state.copyWith(status: AuthStatus.authenticated, user: user);
-      await NotificationService.instance.initialize();
+      // Don't await — these should not block navigation
+      NotificationService.instance.initialize().catchError((_) {});
+      PresenceService.instance.connect().catchError((_) {});
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.error,
@@ -67,7 +72,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password2: password2,
       );
       state = state.copyWith(status: AuthStatus.authenticated, user: user);
-      await NotificationService.instance.initialize();
+      // Don't await — these should not block navigation
+      NotificationService.instance.initialize().catchError((_) {});
+      PresenceService.instance.connect().catchError((_) {});
     } catch (e) {
       state = state.copyWith(
         status: AuthStatus.error,
@@ -78,6 +85,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> logout() async {
     await NotificationService.instance.clearToken();
+    await PresenceService.instance.disconnect();
     await _repository.logout();
     state = const AuthState(status: AuthStatus.unauthenticated);
   }

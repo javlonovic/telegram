@@ -10,7 +10,6 @@
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO"/>
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
-    <!-- For Android 12 and below -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -45,17 +44,6 @@
             </intent-filter>
         </activity>
 
-        <!-- FileProvider for sharing files -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.fileprovider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"/>
-        </provider>
-
         <meta-data
             android:name="flutterEmbedding"
             android:value="2"/>
@@ -65,7 +53,6 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="messages"/>
 
-        <!-- FCM default notification icon -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher"/>

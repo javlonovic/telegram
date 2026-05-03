@@ -50,6 +50,11 @@ class WebSocketService {
     _channel!.sink.add(jsonEncode({'content': content, 'type': type}));
   }
 
+  void sendTyping({required bool isTyping}) {
+    if (_channel == null) return;
+    _channel!.sink.add(jsonEncode({'type': 'typing', 'is_typing': isTyping}));
+  }
+
   Future<void> disconnect() async {
     await _channel?.sink.close();
     _channel = null;

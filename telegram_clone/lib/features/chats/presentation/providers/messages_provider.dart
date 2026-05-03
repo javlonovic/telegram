@@ -58,6 +58,10 @@ class MessagesNotifier
     WebSocketService.instance.sendMessage(content: content);
   }
 
+  void sendTyping(bool isTyping) {
+    WebSocketService.instance.sendTyping(isTyping: isTyping);
+  }
+
   void appendMessage(MessageEntity message) {
     final current = state.valueOrNull ?? [];
     // Avoid duplicates (WebSocket may also broadcast the upload)
@@ -69,6 +73,42 @@ class MessagesNotifier
   void dispose() {
     _wsSub?.cancel();
     WebSocketService.instance.disconnect();
+    super.dispose();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Typing indicator state  { userId: username }
+// ---------------------------------------------------------------------------
+
+final typingUsersProvider =
+    StateNotifierProvider.family<TypingNotifier, Map<int, String>, int>(
+  (ref, chatId) => TypingNotifier(chatId),
+);
+
+class TypingNotifier extends StateNotifier<Map<int, String>> {
+  TypingNotifier(this.chatId) : super({}) {
+    _sub = WebSocketService.instance.messageStream.listen((data) {
+      if (data['type'] == 'typing') {
+        final userId = data['user_id'] as int;
+        final username = data['username'] as String;
+        final isTyping = data['is_typing'] as bool;
+        if (isTyping) {
+          state = {...state, userId: username};
+        } else {
+          final updated = Map<int, String>.from(state)..remove(userId);
+          state = updated;
+        }
+      }
+    });
+  }
+
+  final int chatId;
+  StreamSubscription<Map<String, dynamic>>? _sub;
+
+  @override
+  void dispose() {
+    _sub?.cancel();
     super.dispose();
   }
 }

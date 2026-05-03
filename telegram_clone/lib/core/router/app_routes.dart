@@ -8,4 +8,7 @@ abstract class AppRoutes {
   static const String chat = '/chats/:chatId';
   static const String profile = '/profile';
   static const String settings = '/settings';
+  static const String contacts = '/contacts';
+  static const String search = '/search';
+  static const String newGroup = '/new-group';
 }

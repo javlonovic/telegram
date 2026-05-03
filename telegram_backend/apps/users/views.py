@@ -1,20 +1,23 @@
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model, authenticate
+from django.db.models import Q
+from django.utils import timezone
 from rest_framework import status, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.views import TokenRefreshView
-from django.contrib.auth import authenticate
 
-from .serializers import RegisterSerializer, UserSerializer, UpdateProfileSerializer
+from .models import Contact
+from .serializers import (
+    RegisterSerializer, UserSerializer,
+    UpdateProfileSerializer, ContactSerializer,
+)
 
 User = get_user_model()
 
 
 def _token_response(user):
-    """Helper — generate JWT pair and return with user data."""
     refresh = RefreshToken.for_user(user)
     return {
         'access': str(refresh.access_token),
@@ -22,6 +25,10 @@ def _token_response(user):
         'user': UserSerializer(user).data,
     }
 
+
+# ---------------------------------------------------------------------------
+# Auth
+# ---------------------------------------------------------------------------
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
@@ -40,20 +47,20 @@ class LoginView(APIView):
     def post(self, request):
         phone = request.data.get('phone', '').strip()
         password = request.data.get('password', '')
-
         if not phone or not password:
             return Response(
                 {'detail': 'Phone and password are required.'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
         user = authenticate(request, username=phone, password=password)
         if user is None:
             return Response(
                 {'detail': 'Invalid credentials.'},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-
+        # Mark online
+        user.is_online = True
+        user.save(update_fields=['is_online'])
         return Response(_token_response(user), status=status.HTTP_200_OK)
 
 
@@ -62,16 +69,22 @@ class LogoutView(APIView):
 
     def post(self, request):
         try:
-            refresh_token = request.data.get('refresh')
-            token = RefreshToken(refresh_token)
+            token = RefreshToken(request.data.get('refresh'))
             token.blacklist()
         except Exception:
-            pass  # Token already invalid — still return 200
-        return Response({'detail': 'Logged out.'}, status=status.HTTP_200_OK)
+            pass
+        # Mark offline
+        request.user.is_online = False
+        request.user.last_seen = timezone.now()
+        request.user.save(update_fields=['is_online', 'last_seen'])
+        return Response({'detail': 'Logged out.'})
 
+
+# ---------------------------------------------------------------------------
+# Users
+# ---------------------------------------------------------------------------
 
 class MeView(generics.RetrieveUpdateAPIView):
-    """GET/PATCH /api/users/me/ — current user profile."""
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
@@ -87,7 +100,6 @@ class MeView(generics.RetrieveUpdateAPIView):
 
 
 class UserDetailView(generics.RetrieveAPIView):
-    """GET /api/users/<pk>/"""
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -98,31 +110,60 @@ class UserDetailView(generics.RetrieveAPIView):
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
-def user_list_view(request):
-    """GET /api/users/ — search by username or phone."""
-    query = request.query_params.get('q', '')
-    users = User.objects.filter(username__icontains=query)[:20] if query else []
+def user_search_view(request):
+    """GET /api/users/?q=<query> — search by username or phone."""
+    query = request.query_params.get('q', '').strip()
+    if not query or len(query) < 2:
+        return Response({'users': []})
+    users = User.objects.filter(
+        Q(username__icontains=query) | Q(phone__icontains=query)
+    ).exclude(id=request.user.id)[:20]
     serializer = UserSerializer(users, many=True, context={'request': request})
     return Response({'users': serializer.data})
 
 
+# ---------------------------------------------------------------------------
+# Contacts
+# ---------------------------------------------------------------------------
+
+class ContactListView(generics.ListCreateAPIView):
+    """GET /api/users/contacts/  — list contacts
+       POST /api/users/contacts/ — add contact"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = ContactSerializer
+
+    def get_queryset(self):
+        return Contact.objects.filter(owner=self.request.user).select_related('contact')
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class ContactDetailView(generics.DestroyAPIView):
+    """DELETE /api/users/contacts/<pk>/"""
+    permission_classes = [IsAuthenticated]
+    serializer_class = ContactSerializer
+
+    def get_queryset(self):
+        return Contact.objects.filter(owner=self.request.user)
+
+
+# ---------------------------------------------------------------------------
+# FCM Token
+# ---------------------------------------------------------------------------
+
 class FCMTokenView(APIView):
-    """POST /api/users/fcm-token/ — register or update device FCM token."""
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
         token = request.data.get('fcm_token', '').strip()
         if not token:
-            return Response(
-                {'detail': 'fcm_token is required.'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response({'detail': 'fcm_token is required.'}, status=status.HTTP_400_BAD_REQUEST)
         request.user.fcm_token = token
         request.user.save(update_fields=['fcm_token'])
         return Response({'detail': 'FCM token updated.'})
 
     def delete(self, request):
-        """DELETE — clear token on logout."""
         request.user.fcm_token = ''
         request.user.save(update_fields=['fcm_token'])
         return Response({'detail': 'FCM token cleared.'})

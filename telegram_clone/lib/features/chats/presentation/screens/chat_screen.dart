@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +23,29 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   final _messageController = TextEditingController();
   final _scrollController = ScrollController();
   final _imagePicker = ImagePicker();
+  Timer? _typingTimer;
+  bool _isTyping = false;
 
   int get _chatId => int.parse(widget.chatId);
 
   @override
   void dispose() {
+    _typingTimer?.cancel();
     _messageController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged(String value) {
+    if (!_isTyping) {
+      _isTyping = true;
+      ref.read(messagesProvider(_chatId).notifier).sendTyping(true);
+    }
+    _typingTimer?.cancel();
+    _typingTimer = Timer(const Duration(seconds: 2), () {
+      _isTyping = false;
+      ref.read(messagesProvider(_chatId).notifier).sendTyping(false);
+    });
   }
 
   void _sendText() {
@@ -181,11 +197,15 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ],
             ),
 
+          // Typing indicator
+          _TypingIndicator(chatId: _chatId),
+
           // Input bar
           _MessageInput(
             controller: _messageController,
             onSend: _sendText,
             onAttach: _showAttachmentSheet,
+            onChanged: _onTextChanged,
           ),
         ],
       ),
@@ -239,11 +259,13 @@ class _MessageInput extends StatelessWidget {
     required this.controller,
     required this.onSend,
     required this.onAttach,
+    this.onChanged,
   });
 
   final TextEditingController controller;
   final VoidCallback onSend;
   final VoidCallback onAttach;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -271,6 +293,7 @@ class _MessageInput extends StatelessWidget {
                 controller: controller,
                 maxLines: null,
                 textCapitalization: TextCapitalization.sentences,
+                onChanged: onChanged,
                 decoration: InputDecoration(
                   hintText: 'Message',
                   contentPadding: const EdgeInsets.symmetric(
@@ -296,6 +319,87 @@ class _MessageInput extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Typing indicator
+// ---------------------------------------------------------------------------
+
+class _TypingIndicator extends ConsumerWidget {
+  const _TypingIndicator({required this.chatId});
+  final int chatId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final typingUsers = ref.watch(typingUsersProvider(chatId));
+    if (typingUsers.isEmpty) return const SizedBox.shrink();
+
+    final names = typingUsers.values.join(', ');
+    final label = typingUsers.length == 1
+        ? '$names is typing...'
+        : '$names are typing...';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        children: [
+          _TypingDots(),
+          const SizedBox(width: 8),
+          Text(label,
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+}
+
+class _TypingDots extends StatefulWidget {
+  @override
+  State<_TypingDots> createState() => _TypingDotsState();
+}
+
+class _TypingDotsState extends State<_TypingDots>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (_, __) {
+        return Row(
+          children: List.generate(3, (i) {
+            final delay = i / 3;
+            final opacity = ((_controller.value - delay) % 1.0).clamp(0.0, 1.0);
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 2),
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.grey.withOpacity(0.3 + opacity * 0.7),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }
