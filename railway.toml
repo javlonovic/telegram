@@ -1,0 +1,9 @@
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r telegram_backend/requirements.txt"
+
+[deploy]
+startCommand = "cd telegram_backend && daphne -b 0.0.0.0 -p $PORT telegram_backend.asgi:application"
+healthcheckPath = "/api/auth/login/"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"

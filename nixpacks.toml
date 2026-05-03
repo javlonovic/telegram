@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["python312", "postgresql"]
+
+[phases.install]
+cmds = ["pip install -r telegram_backend/requirements.txt"]
+
+[phases.build]
+cmds = ["cd telegram_backend && python manage.py migrate --noinput"]
+
+[start]
+cmd = "cd telegram_backend && daphne -b 0.0.0.0 -p $PORT telegram_backend.asgi:application"
