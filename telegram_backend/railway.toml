@@ -1,0 +1,11 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "daphne -b 0.0.0.0 -p $PORT telegram_backend.asgi:application"
+healthcheckPath = "/api/auth/login/"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+
+[[deploy.releaseCommands]]
+command = "python manage.py migrate --noinput"

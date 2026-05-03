@@ -1,6 +1,7 @@
 from datetime import timedelta
 from decouple import config
 from pathlib import Path
+import os, dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -72,11 +73,14 @@ TEMPLATES = [
 ]
 
 # ---------------------------------------------------------------------------
-# Database — SQLite (dev) or PostgreSQL (prod)
+# Database — SQLite (dev) or PostgreSQL (prod/Railway)
 # ---------------------------------------------------------------------------
 USE_SQLITE = config('USE_SQLITE', default=False, cast=bool)
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-if USE_SQLITE:
+if DATABASE_URL:
+    DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
+elif USE_SQLITE:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -96,17 +100,16 @@ else:
     }
 
 # ---------------------------------------------------------------------------
-# Channel Layers — in-memory (dev) or Redis (prod)
+# Channel Layers — in-memory (dev) or Redis (prod/Railway)
 # ---------------------------------------------------------------------------
 USE_REDIS = config('USE_REDIS', default=False, cast=bool)
+REDIS_URL = os.environ.get('REDIS_URL', config('REDIS_URL', default='redis://localhost:6379'))
 
-if USE_REDIS:
+if USE_REDIS or os.environ.get('REDIS_URL'):
     CHANNEL_LAYERS = {
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
-            'CONFIG': {
-                'hosts': [config('REDIS_URL', default='redis://localhost:6379')],
-            },
+            'CONFIG': {'hosts': [REDIS_URL]},
         },
     }
 else:
