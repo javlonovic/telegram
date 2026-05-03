@@ -1,7 +1,14 @@
 from datetime import timedelta
 from decouple import config
 from pathlib import Path
-import os, dj_database_url
+import os
+
+# Optional: dj-database-url for Railway/Heroku DATABASE_URL support
+try:
+    import dj_database_url
+    _HAS_DJ_DB_URL = True
+except ImportError:
+    _HAS_DJ_DB_URL = False
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -78,7 +85,7 @@ TEMPLATES = [
 USE_SQLITE = config('USE_SQLITE', default=False, cast=bool)
 DATABASE_URL = os.environ.get('DATABASE_URL')
 
-if DATABASE_URL:
+if DATABASE_URL and _HAS_DJ_DB_URL:
     DATABASES = {'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 elif USE_SQLITE:
     DATABASES = {
