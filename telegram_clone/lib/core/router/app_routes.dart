@@ -3,14 +3,19 @@ abstract class AppRoutes {
   static const String onboarding  = '/onboarding';
   static const String login       = '/login';
   static const String register    = '/register';
-  static const String chats       = '/chats';
-  static const String chat        = '/chat/:chatId';
-  static const String profile     = '/profile';
-  static const String editProfile = '/profile/edit';
-  static const String settings    = '/settings';
-  static const String contacts    = '/contacts';
-  static const String search      = '/search';
-  static const String newGroup    = '/new-group';
 
-  static String chatPath(int id) => '/chat/$id';
+  // Root authenticated screen
+  static const String chats       = '/chats';
+
+  // Children of /chats — use context.go() with these full paths
+  static const String chat        = '/chats/:chatId';
+  static const String profile     = '/chats/profile';
+  static const String editProfile = '/chats/profile/edit';
+  static const String settings    = '/chats/settings';
+  static const String contacts    = '/chats/contacts';
+  static const String search      = '/chats/search';
+  static const String newGroup    = '/chats/new-group';
+
+  /// Build a chat path for a specific id
+  static String chatPath(int id) => '/chats/$id';
 }
