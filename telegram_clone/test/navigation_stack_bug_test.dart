@@ -1,14 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:telegram_clone/core/router/app_routes.dart';
-import 'package:telegram_clone/features/profile/presentation/screens/profile_screen.dart';
-import 'package:telegram_clone/features/profile/presentation/screens/settings_screen.dart';
-import 'package:telegram_clone/features/profile/presentation/screens/edit_profile_screen.dart';
-import 'package:telegram_clone/features/auth/presentation/providers/auth_notifier.dart';
-import 'package:telegram_clone/features/auth/presentation/providers/auth_state.dart';
-import 'package:telegram_clone/features/auth/data/models/user_model.dart';
 
 /// **Validates: Requirements 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8**
 ///
@@ -30,15 +23,6 @@ import 'package:telegram_clone/features/auth/data/models/user_model.dart';
 void main() {
   group('Bug Condition Exploration - Navigation Stack Breaks with Absolute Paths', () {
     late GoRouter router;
-    
-    // Mock authenticated user
-    final mockUser = UserModel(
-      id: 1,
-      username: 'testuser',
-      phone: '+1234567890',
-      bio: 'Test bio',
-      avatarUrl: null,
-    );
 
     setUp(() {
       // Create a test router with the same structure as the app
@@ -48,26 +32,36 @@ void main() {
           GoRoute(
             path: '/chats',
             name: 'chats',
-            builder: (context, state) => const Scaffold(
-              body: Center(child: Text('Chats Screen')),
+            builder: (context, state) => Scaffold(
+              appBar: AppBar(title: const Text('Chats Screen')),
+              body: const Center(child: Text('Chats Screen')),
             ),
             routes: [
               GoRoute(
                 path: 'profile',
                 name: 'profile',
-                builder: (context, state) => const ProfileScreen(),
+                builder: (context, state) => Scaffold(
+                  appBar: AppBar(title: const Text('Profile Screen')),
+                  body: const Center(child: Text('Profile Screen')),
+                ),
                 routes: [
                   GoRoute(
                     path: 'edit',
                     name: 'edit-profile',
-                    builder: (context, state) => const EditProfileScreen(),
+                    builder: (context, state) => Scaffold(
+                      appBar: AppBar(title: const Text('Edit Profile Screen')),
+                      body: const Center(child: Text('Edit Profile Screen')),
+                    ),
                   ),
                 ],
               ),
               GoRoute(
                 path: 'settings',
                 name: 'settings',
-                builder: (context, state) => const SettingsScreen(),
+                builder: (context, state) => Scaffold(
+                  appBar: AppBar(title: const Text('Settings Screen')),
+                  body: const Center(child: Text('Settings Screen')),
+                ),
               ),
             ],
           ),
@@ -81,18 +75,8 @@ void main() {
       'FAULT: Navigating from ChatsScreen to ProfileScreen with absolute path /chats/profile breaks navigation stack',
       (WidgetTester tester) async {
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authNotifierProvider.overrideWith((ref) => AuthNotifier(
-                authRepository: null as dynamic,
-              )..state = AuthState(
-                status: AuthStatus.authenticated,
-                user: mockUser,
-              )),
-            ],
-            child: MaterialApp.router(
-              routerConfig: router,
-            ),
+          MaterialApp.router(
+            routerConfig: router,
           ),
         );
         await tester.pumpAndSettle();
@@ -106,7 +90,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verify we're on ProfileScreen
-        expect(find.byType(ProfileScreen), findsOneWidget);
+        expect(find.text('Profile Screen'), findsOneWidget);
         
         // Check the navigation stack - with absolute paths, the stack is broken
         final location = router.routerDelegate.currentConfiguration.uri.path;
@@ -149,18 +133,8 @@ void main() {
       'FAULT: Navigating from ChatsScreen to SettingsScreen with absolute path /chats/settings breaks navigation stack',
       (WidgetTester tester) async {
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authNotifierProvider.overrideWith((ref) => AuthNotifier(
-                authRepository: null as dynamic,
-              )..state = AuthState(
-                status: AuthStatus.authenticated,
-                user: mockUser,
-              )),
-            ],
-            child: MaterialApp.router(
-              routerConfig: router,
-            ),
+          MaterialApp.router(
+            routerConfig: router,
           ),
         );
         await tester.pumpAndSettle();
@@ -173,7 +147,7 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verify we're on SettingsScreen
-        expect(find.byType(SettingsScreen), findsOneWidget);
+        expect(find.text('Settings Screen'), findsOneWidget);
 
         // Try to go back
         final canGoBack = router.canPop();
@@ -203,18 +177,8 @@ void main() {
       'FAULT: Navigating from ProfileScreen to EditProfileScreen with absolute path /chats/profile/edit breaks navigation stack',
       (WidgetTester tester) async {
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authNotifierProvider.overrideWith((ref) => AuthNotifier(
-                authRepository: null as dynamic,
-              )..state = AuthState(
-                status: AuthStatus.authenticated,
-                user: mockUser,
-              )),
-            ],
-            child: MaterialApp.router(
-              routerConfig: router,
-            ),
+          MaterialApp.router(
+            routerConfig: router,
           ),
         );
         await tester.pumpAndSettle();
@@ -222,14 +186,14 @@ void main() {
         // Navigate to ProfileScreen first (using absolute path - simulating current bug)
         router.push(AppRoutes.profile);
         await tester.pumpAndSettle();
-        expect(find.byType(ProfileScreen), findsOneWidget);
+        expect(find.text('Profile Screen'), findsOneWidget);
 
         // Now navigate to EditProfileScreen using ABSOLUTE path (this is the bug)
         router.push(AppRoutes.editProfile); // AppRoutes.editProfile = '/chats/profile/edit'
         await tester.pumpAndSettle();
 
         // Verify we're on EditProfileScreen
-        expect(find.byType(EditProfileScreen), findsOneWidget);
+        expect(find.text('Edit Profile Screen'), findsOneWidget);
 
         // Try to go back to ProfileScreen
         final canGoBack = router.canPop();
@@ -245,7 +209,7 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(
-            find.byType(ProfileScreen),
+            find.text('Profile Screen'),
             findsOneWidget,
             reason: 'Back navigation should return to ProfileScreen',
           );
@@ -278,18 +242,8 @@ void main() {
       'FAULT: Back button after broken navigation shows black screen or navigation failure',
       (WidgetTester tester) async {
         await tester.pumpWidget(
-          ProviderScope(
-            overrides: [
-              authNotifierProvider.overrideWith((ref) => AuthNotifier(
-                authRepository: null as dynamic,
-              )..state = AuthState(
-                status: AuthStatus.authenticated,
-                user: mockUser,
-              )),
-            ],
-            child: MaterialApp.router(
-              routerConfig: router,
-            ),
+          MaterialApp.router(
+            routerConfig: router,
           ),
         );
         await tester.pumpAndSettle();

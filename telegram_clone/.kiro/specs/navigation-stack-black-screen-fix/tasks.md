@@ -1,6 +1,6 @@
 # Implementation Plan
 
-- [-] 1. Write bug condition exploration test
+- [x] 1. Write bug condition exploration test
   - **Property 1: Fault Condition** - Navigation with Absolute Paths Breaks Stack
   - **CRITICAL**: This test MUST FAIL on unfixed code - failure confirms the bug exists
   - **DO NOT attempt to fix the test or the code when it fails**
@@ -16,7 +16,7 @@
   - Mark task complete when test is written, run, and failure is documented
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8_
 
-- [~] 2. Write preservation property tests (BEFORE implementing fix)
+- [ ] 2. Write preservation property tests (BEFORE implementing fix)
   - **Property 2: Preservation** - Top-Level Navigation and Auth Redirects
   - **IMPORTANT**: Follow observation-first methodology
   - Observe behavior on UNFIXED code for non-buggy navigation patterns
