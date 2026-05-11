@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_avatar.dart';
 import '../../../auth/presentation/providers/auth_notifier.dart';
@@ -69,7 +70,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           duration: Duration(seconds: 2),
         ),
       );
-      context.pop();
+      if (context.canPop()) context.pop();
+      else context.go(AppRoutes.chats);
     } catch (e) {
       if (!mounted) return;
       setState(() => _errorMsg = e.toString().replaceFirst('Exception: ', ''));
@@ -91,7 +93,10 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) context.pop();
+            else context.go(AppRoutes.chats);
+          },
         ),
         title: const Text('Edit Profile', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
         actions: [

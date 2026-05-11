@@ -16,11 +16,22 @@ class ContactsDataSource {
     if (data is List) {
       list = data;
     } else if (data is Map) {
-      list = (data['results'] ?? data['contacts'] ?? []) as List<dynamic>;
+      final results = data['results'] ?? data['contacts'] ?? data['data'] ?? [];
+      list = results is List ? results : [];
     } else {
       list = [];
     }
-    return list.map((e) => _parseContact(e as Map<String, dynamic>)).toList();
+    final parsed = <ContactEntity>[];
+    for (final e in list) {
+      if (e is Map<String, dynamic>) {
+        try {
+          parsed.add(_parseContact(e));
+        } catch (_) {
+          // skip malformed entries
+        }
+      }
+    }
+    return parsed;
   }
 
   Future<ContactEntity> addContact(int userId, {String nickname = ''}) async {

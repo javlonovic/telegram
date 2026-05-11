@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../core/network/presence_service.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/app_avatar.dart';
 import '../../../../shared/widgets/upload_progress_bubble.dart';
@@ -149,7 +150,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         // Bug 1 fix: use context.pop() which works with GoRouter nested routes
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.chats);
+            }
+          },
         ),
         title: Row(
           children: [

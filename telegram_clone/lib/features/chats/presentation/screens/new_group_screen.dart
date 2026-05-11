@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/network/dio_client.dart';
 import '../../../../core/constants/api_constants.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../shared/widgets/app_avatar.dart';
 import '../../../../shared/widgets/primary_button.dart';
 import '../../../auth/domain/entities/user_entity.dart';
@@ -77,7 +78,10 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) context.pop();
+            else context.go(AppRoutes.chats);
+          },
         ),
         title: const Text(
           'New Group',

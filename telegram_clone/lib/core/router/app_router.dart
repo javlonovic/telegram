@@ -49,15 +49,12 @@ GoRouter buildRouter(Ref ref) {
       }
 
       // Error on splash — go to login
-      if (authState.status == AuthStatus.error &&
-          loc == AppRoutes.splash) {
+      if (authState.status == AuthStatus.error && loc == AppRoutes.splash) {
         return AppRoutes.login;
       }
 
       // Authenticated trying to access auth/onboarding screens
-      if (authState.isAuthenticated &&
-          isPublic &&
-          loc != AppRoutes.splash) {
+      if (authState.isAuthenticated && isPublic && loc != AppRoutes.splash) {
         return AppRoutes.chats;
       }
 

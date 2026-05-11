@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_spacing.dart';
 import '../../../../core/network/presence_service.dart';
+import '../../../../core/router/app_routes.dart';
 import '../../../../shared/widgets/app_avatar.dart';
 import '../../../auth/domain/entities/user_entity.dart';
 import '../../../chats/data/datasources/chat_remote_datasource.dart';
@@ -62,7 +63,10 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
+          onPressed: () {
+            if (context.canPop()) context.pop();
+            else context.go(AppRoutes.chats);
+          },
         ),
         title: TextField(
           controller: _controller,

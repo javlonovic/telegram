@@ -96,10 +96,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       state = state.copyWith(status: AuthStatus.authenticated, user: user);
     } catch (e) {
+      // Update error state but also rethrow so callers can handle it
       state = state.copyWith(
-        status: AuthStatus.error,
+        status: AuthStatus.authenticated, // keep authenticated
         errorMessage: e.toString().replaceFirst('Exception: ', ''),
       );
+      rethrow;
     }
   }
 
