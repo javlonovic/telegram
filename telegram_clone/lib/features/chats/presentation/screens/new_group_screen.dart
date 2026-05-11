@@ -53,7 +53,7 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
         },
       );
       final chatId = response.data['id'] as int;
-      if (mounted) context.go('/chats/$chatId');
+      if (mounted) context.push(AppRoutes.chatPath(chatId));
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

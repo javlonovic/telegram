@@ -108,7 +108,7 @@ class ContactsScreen extends ConsumerWidget {
                       final chat =
                           await ds.createPrivateChat(c.contact.id);
                       if (context.mounted) {
-                        context.go('/chats/${chat.id}');
+                        context.push(AppRoutes.chatPath(chat.id));
                       }
                     },
                   ),

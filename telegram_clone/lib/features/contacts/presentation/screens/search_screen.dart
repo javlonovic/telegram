@@ -39,7 +39,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     try {
       final ds = ChatRemoteDataSource();
       final chat = await ds.createPrivateChat(user.id);
-      if (mounted) context.go('/chats/${chat.id}');
+      if (mounted) context.push(AppRoutes.chatPath(chat.id));
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

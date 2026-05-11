@@ -24,16 +24,26 @@ const _publicRoutes = {
   AppRoutes.register,
 };
 
+// Routes that require auth but should never be redirected away from
+const _protectedRoutes = {
+  AppRoutes.chats,
+  AppRoutes.profile,
+  AppRoutes.editProfile,
+  AppRoutes.settings,
+  AppRoutes.contacts,
+  AppRoutes.search,
+  AppRoutes.newGroup,
+};
+
 GoRouter buildRouter(Ref ref) {
   return GoRouter(
     initialLocation: AppRoutes.splash,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     refreshListenable: _AuthStateListenable(ref),
     redirect: (context, state) {
       final authState = ref.read(authNotifierProvider);
       final loc = state.matchedLocation;
 
-      // Still loading — stay on splash
       if (authState.status == AuthStatus.initial ||
           authState.status == AuthStatus.loading) {
         return AppRoutes.splash;
@@ -41,19 +51,16 @@ GoRouter buildRouter(Ref ref) {
 
       final isPublic = _publicRoutes.contains(loc);
 
-      // Not authenticated trying to access protected route
       if ((authState.status == AuthStatus.unauthenticated ||
               authState.status == AuthStatus.error) &&
           !isPublic) {
         return AppRoutes.login;
       }
 
-      // Error on splash — go to login
       if (authState.status == AuthStatus.error && loc == AppRoutes.splash) {
         return AppRoutes.login;
       }
 
-      // Authenticated trying to access auth/onboarding screens
       if (authState.isAuthenticated && isPublic && loc != AppRoutes.splash) {
         return AppRoutes.chats;
       }
@@ -95,7 +102,7 @@ GoRouter buildRouter(Ref ref) {
         ),
       ),
 
-      // ── Authenticated — chats is the root, everything else is a child ──
+      // ── Authenticated — all flat, use context.push() for back stack ──
       GoRoute(
         path: AppRoutes.chats,
         name: 'chats',
@@ -104,76 +111,69 @@ GoRouter buildRouter(Ref ref) {
           child: const ChatsScreen(),
           transitionsBuilder: _fadeTransition,
         ),
-        routes: [
-          // Static named routes MUST come before the :chatId wildcard
-          // /chats/profile
-          GoRoute(
-            path: 'profile',
-            name: 'profile',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const ProfileScreen(),
-              transitionsBuilder: _slideTransition,
-            ),
-            routes: [
-              GoRoute(
-                path: 'edit',
-                name: 'edit-profile',
-                pageBuilder: (_, state) => CustomTransitionPage(
-                  key: state.pageKey,
-                  child: const EditProfileScreen(),
-                  transitionsBuilder: _slideTransition,
-                ),
-              ),
-            ],
-          ),
-          GoRoute(
-            path: 'settings',
-            name: 'settings',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const SettingsScreen(),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
-          GoRoute(
-            path: 'contacts',
-            name: 'contacts',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const ContactsScreen(),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
-          GoRoute(
-            path: 'search',
-            name: 'search',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const SearchScreen(),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
-          GoRoute(
-            path: 'new-group',
-            name: 'new-group',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const NewGroupScreen(),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
-          // :chatId wildcard LAST — only matches numeric IDs
-          GoRoute(
-            path: ':chatId',
-            name: 'chat',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: ChatScreen(chatId: state.pathParameters['chatId']!),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
-        ],
+      ),
+      GoRoute(
+        path: AppRoutes.chat,
+        name: 'chat',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: ChatScreen(chatId: state.pathParameters['chatId']!),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.profile,
+        name: 'profile',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ProfileScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.editProfile,
+        name: 'edit-profile',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const EditProfileScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.settings,
+        name: 'settings',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SettingsScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.contacts,
+        name: 'contacts',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ContactsScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.search,
+        name: 'search',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SearchScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
+      ),
+      GoRoute(
+        path: AppRoutes.newGroup,
+        name: 'new-group',
+        pageBuilder: (_, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const NewGroupScreen(),
+          transitionsBuilder: _slideTransition,
+        ),
       ),
     ],
     errorBuilder: (_, state) => Scaffold(

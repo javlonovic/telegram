@@ -40,7 +40,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
             senderName: senderName,
             messagePreview: body,
             onTap: () {
-              if (chatId != null) context.go('/chats/$chatId');
+              if (chatId != null) context.push(AppRoutes.chatPath(chatId));
             },
           );
         });
@@ -194,7 +194,7 @@ class _ChatsScreenState extends ConsumerState<ChatsScreen> {
                   isLastMine: isLastMine,
                   onTap: () {
                     ref.read(unreadCountProvider.notifier).clear(chat.id);
-                    context.go('/chats/${chat.id}');
+                    context.push(AppRoutes.chatPath(chat.id));
                   },
                 );
               },
