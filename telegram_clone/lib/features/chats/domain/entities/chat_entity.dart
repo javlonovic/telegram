@@ -22,12 +22,13 @@ class ChatEntity {
 
   /// Returns the other member's name for private chats.
   String displayName(int currentUserId) {
+    // For private chats, show the other person's name
     if (type == ChatType.private) {
-      final other = members.firstWhere(
-        (m) => m.id != currentUserId,
-        orElse: () => members.first,
-      );
-      return other.username;
+      // Try to find a member that isn't the current user
+      final others = members.where((m) => m.id != currentUserId).toList();
+      if (others.isNotEmpty) return others.first.username;
+      // Fallback: show first member (edge case: chatting with yourself)
+      if (members.isNotEmpty) return members.first.username;
     }
     return 'Group Chat #$id';
   }
@@ -35,11 +36,9 @@ class ChatEntity {
   /// Returns the other member's avatar for private chats.
   String? displayAvatar(int currentUserId) {
     if (type == ChatType.private) {
-      final other = members.firstWhere(
-        (m) => m.id != currentUserId,
-        orElse: () => members.first,
-      );
-      return other.avatarUrl;
+      final others = members.where((m) => m.id != currentUserId).toList();
+      if (others.isNotEmpty) return others.first.avatarUrl;
+      if (members.isNotEmpty) return members.first.avatarUrl;
     }
     return null;
   }

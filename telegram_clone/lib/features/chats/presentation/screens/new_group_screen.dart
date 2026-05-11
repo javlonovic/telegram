@@ -69,7 +69,21 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
     final contactsAsync = ref.watch(contactsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('New Group')),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF232E3C)
+            : const Color(0xFF2AABEE),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'New Group',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
+      ),
       body: Column(
         children: [
           // Group name input

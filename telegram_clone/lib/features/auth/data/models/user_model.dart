@@ -22,17 +22,23 @@ class UserModel {
   final DateTime createdAt;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
+    // id can arrive as int or string depending on the endpoint
+    final rawId = json['id'];
+    final id = rawId is int ? rawId : int.tryParse(rawId.toString()) ?? 0;
+
     return UserModel(
-      id: json['id'] as int,
-      username: json['username'] as String,
-      phone: json['phone'] as String,
+      id: id,
+      username: json['username'] as String? ?? '',
+      phone: json['phone'] as String? ?? '',
       bio: json['bio'] as String? ?? '',
       avatarUrl: json['avatar_url'] as String?,
       isOnline: json['is_online'] as bool? ?? false,
       lastSeen: json['last_seen'] != null
-          ? DateTime.parse(json['last_seen'] as String)
+          ? DateTime.tryParse(json['last_seen'] as String)
           : null,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 

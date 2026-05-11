@@ -55,6 +55,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF232E3C)
+            : const Color(0xFF2AABEE),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
         title: TextField(
           controller: _controller,
           autofocus: true,
@@ -69,7 +78,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
         actions: [
           if (_controller.text.isNotEmpty)
             IconButton(
-              icon: const Icon(Icons.clear),
+              icon: const Icon(Icons.clear, color: Colors.white),
               onPressed: () {
                 _controller.clear();
                 ref.read(userSearchProvider.notifier).clear();

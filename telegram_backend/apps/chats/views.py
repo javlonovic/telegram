@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
+from django.db.models import Count
 
 from .models import Chat, ChatMember, GroupMeta
 from .serializers import ChatSerializer, GroupMetaSerializer, ChatMemberSerializer
@@ -25,6 +26,24 @@ class ChatListCreateView(generics.ListCreateAPIView):
 
     def get_serializer_context(self):
         return {'request': self.request}
+
+    def create(self, request, *args, **kwargs):
+        chat_type = request.data.get('type', 'private')
+
+        # For private chats, reuse existing chat if one already exists
+        if chat_type == 'private':
+            member_ids = request.data.get('member_ids', [])
+            if member_ids:
+                target_id = member_ids[0]
+                existing = Chat.objects.filter(
+                    type=Chat.ChatType.PRIVATE,
+                    members=request.user,
+                ).filter(members__id=target_id).first()
+                if existing:
+                    serializer = self.get_serializer(existing)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return super().create(request, *args, **kwargs)
 
 
 class ChatDetailView(generics.RetrieveAPIView):
@@ -105,7 +124,6 @@ class ReadReceiptView(APIView):
         if not message_id:
             return Response({'detail': 'message_id required.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Mark all unread messages up to message_id as read
         unread = Message.objects.filter(
             chat=chat,
             id__lte=message_id,
@@ -119,9 +137,39 @@ class ReadReceiptView(APIView):
         ]
         MessageReadReceipt.objects.bulk_create(receipts, ignore_conflicts=True)
 
-        # Update last_read on membership
         ChatMember.objects.filter(chat=chat, user=request.user).update(
             last_read_message_id=message_id
         )
 
         return Response({'detail': 'Marked as read.', 'count': len(receipts)})
+
+
+class DeduplicateChatsView(APIView):
+    """POST /api/chats/deduplicate/ — remove duplicate private chats for the current user."""
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        # Get all private chats this user is in
+        private_chats = (
+            Chat.objects
+            .filter(type=Chat.ChatType.PRIVATE, members=user)
+            .prefetch_related('members')
+            .order_by('created_at')  # keep oldest
+        )
+
+        seen = {}  # frozenset(member_ids) -> first chat id
+        to_delete = []
+
+        for chat in private_chats:
+            key = frozenset(chat.members.values_list('id', flat=True))
+            if key in seen:
+                to_delete.append(chat.id)
+            else:
+                seen[key] = chat.id
+
+        deleted_count = 0
+        if to_delete:
+            deleted_count, _ = Chat.objects.filter(id__in=to_delete).delete()
+
+        return Response({'deleted': deleted_count, 'kept': len(seen)})

@@ -18,11 +18,23 @@ class ContactsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Contacts'),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF232E3C)
+            : const Color(0xFF2AABEE),
+        foregroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Contacts',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () => context.go(AppRoutes.search),
+            icon: const Icon(Icons.search, color: Colors.white),
+            onPressed: () => context.push(AppRoutes.search),
           ),
         ],
       ),
@@ -40,7 +52,7 @@ class ContactsScreen extends ConsumerWidget {
                   TextButton.icon(
                     icon: const Icon(Icons.search),
                     label: const Text('Find people'),
-                    onPressed: () => context.go(AppRoutes.search),
+                    onPressed: () => context.push(AppRoutes.search),
                   ),
                 ],
               ),

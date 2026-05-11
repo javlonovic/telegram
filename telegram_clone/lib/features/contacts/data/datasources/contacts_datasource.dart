@@ -11,7 +11,15 @@ class ContactsDataSource {
 
   Future<List<ContactEntity>> getContacts() async {
     final response = await _dio.get(ApiConstants.contacts);
-    final list = response.data as List<dynamic>;
+    final data = response.data;
+    List<dynamic> list;
+    if (data is List) {
+      list = data;
+    } else if (data is Map) {
+      list = (data['results'] ?? data['contacts'] ?? []) as List<dynamic>;
+    } else {
+      list = [];
+    }
     return list.map((e) => _parseContact(e as Map<String, dynamic>)).toList();
   }
 
@@ -32,18 +40,34 @@ class ContactsDataSource {
       ApiConstants.users,
       queryParameters: {'q': query},
     );
-    final list = response.data['users'] as List<dynamic>;
+    // Handle: {"users": [...]}, {"results": [...]}, or plain list
+    final data = response.data;
+    List<dynamic> list;
+    if (data is List) {
+      list = data;
+    } else if (data is Map) {
+      list = (data['users'] ?? data['results'] ?? []) as List<dynamic>;
+    } else {
+      list = [];
+    }
     return list
         .map((e) => UserModel.fromJson(e as Map<String, dynamic>).toEntity())
         .toList();
   }
 
   ContactEntity _parseContact(Map<String, dynamic> json) {
+    // contact field is a nested UserSerializer object
+    final contactRaw = json['contact'];
+    if (contactRaw == null || contactRaw is! Map) {
+      throw Exception('Invalid contact data: $json');
+    }
     return ContactEntity(
       id: json['id'] as int,
-      contact: UserModel.fromJson(json['contact'] as Map<String, dynamic>).toEntity(),
+      contact: UserModel.fromJson(contactRaw as Map<String, dynamic>).toEntity(),
       nickname: json['nickname'] as String? ?? '',
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
     );
   }
 }

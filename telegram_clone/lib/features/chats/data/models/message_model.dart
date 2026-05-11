@@ -27,10 +27,16 @@ class MessageModel {
   final String? mediaMimeType;
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
+    // 'chat' can be a plain int or a nested object {"id": ...}
+    final chatRaw = json['chat'];
+    final chatId = chatRaw is int
+        ? chatRaw
+        : (chatRaw is Map ? chatRaw['id'] as int : 0);
+
     return MessageModel(
       id: json['id'] as int,
       sender: UserModel.fromJson(json['sender'] as Map<String, dynamic>),
-      chatId: json['chat'] as int,
+      chatId: chatId,
       content: json['content'] as String? ?? '',
       messageType: json['message_type'] as String? ?? 'text',
       createdAt: DateTime.parse(json['created_at'] as String),

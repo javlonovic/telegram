@@ -45,6 +45,7 @@ dependencies:
 
   # Utils
   rxdart: ^0.27.7
+  shared_preferences: ^2.2.3
 
   # UI
   cached_network_image: ^3.3.1
