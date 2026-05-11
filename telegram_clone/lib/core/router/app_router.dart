@@ -44,6 +44,7 @@ GoRouter buildRouter(Ref ref) {
       final authState = ref.read(authNotifierProvider);
       final loc = state.matchedLocation;
 
+      // Still loading — stay on splash
       if (authState.status == AuthStatus.initial ||
           authState.status == AuthStatus.loading) {
         return AppRoutes.splash;
@@ -51,16 +52,20 @@ GoRouter buildRouter(Ref ref) {
 
       final isPublic = _publicRoutes.contains(loc);
 
+      // Not authenticated trying to access protected route
       if ((authState.status == AuthStatus.unauthenticated ||
               authState.status == AuthStatus.error) &&
           !isPublic) {
         return AppRoutes.login;
       }
 
+      // Error on splash — go to login
       if (authState.status == AuthStatus.error && loc == AppRoutes.splash) {
         return AppRoutes.login;
       }
 
+      // Authenticated on a public screen (login/register/onboarding) → go to chats
+      // But never redirect away from protected screens
       if (authState.isAuthenticated && isPublic && loc != AppRoutes.splash) {
         return AppRoutes.chats;
       }
