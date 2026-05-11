@@ -105,16 +105,7 @@ GoRouter buildRouter(Ref ref) {
           transitionsBuilder: _fadeTransition,
         ),
         routes: [
-          // /chats/:chatId
-          GoRoute(
-            path: ':chatId',
-            name: 'chat',
-            pageBuilder: (_, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: ChatScreen(chatId: state.pathParameters['chatId']!),
-              transitionsBuilder: _slideTransition,
-            ),
-          ),
+          // Static named routes MUST come before the :chatId wildcard
           // /chats/profile
           GoRoute(
             path: 'profile',
@@ -125,7 +116,6 @@ GoRouter buildRouter(Ref ref) {
               transitionsBuilder: _slideTransition,
             ),
             routes: [
-              // /chats/profile/edit
               GoRoute(
                 path: 'edit',
                 name: 'edit-profile',
@@ -137,7 +127,6 @@ GoRouter buildRouter(Ref ref) {
               ),
             ],
           ),
-          // /chats/settings
           GoRoute(
             path: 'settings',
             name: 'settings',
@@ -147,7 +136,6 @@ GoRouter buildRouter(Ref ref) {
               transitionsBuilder: _slideTransition,
             ),
           ),
-          // /chats/contacts
           GoRoute(
             path: 'contacts',
             name: 'contacts',
@@ -157,7 +145,6 @@ GoRouter buildRouter(Ref ref) {
               transitionsBuilder: _slideTransition,
             ),
           ),
-          // /chats/search
           GoRoute(
             path: 'search',
             name: 'search',
@@ -167,13 +154,22 @@ GoRouter buildRouter(Ref ref) {
               transitionsBuilder: _slideTransition,
             ),
           ),
-          // /chats/new-group
           GoRoute(
             path: 'new-group',
             name: 'new-group',
             pageBuilder: (_, state) => CustomTransitionPage(
               key: state.pageKey,
               child: const NewGroupScreen(),
+              transitionsBuilder: _slideTransition,
+            ),
+          ),
+          // :chatId wildcard LAST — only matches numeric IDs
+          GoRoute(
+            path: ':chatId',
+            name: 'chat',
+            pageBuilder: (_, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: ChatScreen(chatId: state.pathParameters['chatId']!),
               transitionsBuilder: _slideTransition,
             ),
           ),
